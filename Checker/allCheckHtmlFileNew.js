@@ -58,6 +58,7 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
 
 
 
+    //Ekdom shuru te ei function chilo
     // anchorTags.each(function () {
     //     anchorCount++;
     //     const $anchor = $(this);
@@ -87,7 +88,7 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
 
 
 
-
+    //anchor tag er moddhe image thake check korte
     // anchorTags.each(function () {
     //     anchorCount++;
     //     const $anchor = $(this);
@@ -124,7 +125,7 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
 
 
 
-
+    //anchor tag er moddhe # thake check korbe and jodi anchor tag er moddhe image tag thake tahole check korbe with proper alt attribute
     anchorTags.each(function () {
         anchorCount++;
         const $anchor = $(this);
@@ -133,7 +134,7 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
         const specialCharRegex = /^[!@#$%^&*()_+{}\[\]:;<>,.?/~\\\-]+$/;
         const containsImage = $anchor.find('img').length > 0; // Check if anchor tag contains image tag
 
-        
+
         if (hrefAttribute === '#') {
             // If anchor tag contains no name, consider it as an issue
             if (!anchorText) {
