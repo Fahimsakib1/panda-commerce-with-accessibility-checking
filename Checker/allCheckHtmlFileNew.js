@@ -3,6 +3,9 @@ const cheerio = require('cheerio');
 
 
 
+
+
+
 function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
 
     const $ = cheerio.load(htmlContent);
@@ -24,6 +27,7 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
     let emptyHrefInAnchors = [];
     let invalidHrefAnchors = [];
     let issueFreeAnchors = [];
+    let anchorNotContainImageProperly = [];
 
 
 
@@ -38,22 +42,36 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
 
 
     // Code for checking the buttons and anchor tags that are empty. Means no text in the button and anchor tags
-
     buttonTags.each(function () {
         buttonCount++;
         const buttonText = $(this).text().trim();
         if (!buttonText) {
             emptyButtons.push($(this).toString());
+            return;
         }
         if (altRegexButton.test(buttonText.trim())) {
             meaningLessTextInButtons.push($(this).toString());
-        }
-        if (!buttonText || altRegexButton.test(buttonText)) {
-            // If button text is empty or contains meaningless regex text, skip
             return;
         }
         issueFreeButtons.push($(this).toString());
     });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -126,41 +144,95 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
 
 
     //anchor tag er moddhe # thake check korbe and jodi anchor tag er moddhe image tag thake tahole check korbe with proper alt attribute
+    // anchorTags.each(function () {
+    //     anchorCount++;
+    //     const $anchor = $(this);
+    //     const anchorText = $anchor.text().trim();
+    //     const hrefAttribute = $anchor.attr('href');
+    //     const specialCharRegex = /^[!@#$%^&*()_+{}\[\]:;<>,.?/~\\\-]+$/;
+    //     const containsImage = $anchor.find('img').length > 0;
+    //     if (hrefAttribute === '#') {
+    //         if (!anchorText) {
+    //             emptyAnchors.push($anchor.toString());
+    //             return;
+    //         }
+    //         if (anchorText && specialCharRegex.test(anchorText)) {
+    //             invalidHrefAnchors.push($anchor.toString());
+    //             return;
+    //         }
+    //         issueFreeAnchors.push($anchor.toString());
+    //         return;
+    //     }
+    //     if (containsImage) {
+    //         const $imgTag = $anchor.find('img');
+    //         const imgSrc = $imgTag.attr('src');
+    //         const imgAlt = $imgTag.attr('alt');
+    //         if (imgSrc && imgSrc.trim() !== '' && imgAlt && imgAlt.trim() !== '') {
+    //             issueFreeAnchors.push($anchor.toString());
+    //             return;
+    //         }
+    //     }
+    //     if (!anchorText) {
+    //         emptyAnchors.push($anchor.toString());
+    //         return;
+    //     }
+    //     if (altRegexAnchor.test(anchorText.trim())) {
+    //         meaningLessTextInAnchors.push($anchor.toString());
+    //         return;
+    //     }
+    //     if (!hrefAttribute || hrefAttribute.trim() === '') {
+    //         emptyHrefInAnchors.push($anchor.toString());
+    //         return;
+    //     }
+    //     if ((!hrefAttribute || !/^https?:\/\/|^www\./i.test(hrefAttribute) || specialCharRegex.test(hrefAttribute)) || specialCharRegex.test(anchorText)) {
+    //         invalidHrefAnchors.push($anchor.toString());
+    //         return;
+    //     }
+    //     issueFreeAnchors.push($anchor.toString());
+    // });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     anchorTags.each(function () {
         anchorCount++;
         const $anchor = $(this);
         const anchorText = $anchor.text().trim();
         const hrefAttribute = $anchor.attr('href');
         const specialCharRegex = /^[!@#$%^&*()_+{}\[\]:;<>,.?/~\\\-]+$/;
-        const containsImage = $anchor.find('img').length > 0; // Check if anchor tag contains image tag
-
-
-        if (hrefAttribute === '#') {
-            // If anchor tag contains no name, consider it as an issue
-            if (!anchorText) {
-                emptyAnchors.push($anchor.toString());
+        const containsImage = $anchor.find('img').length > 0;
+        if (containsImage) {
+            if (!hrefAttribute || hrefAttribute.trim() === '') {
+                emptyHrefInAnchors.push($anchor.toString());
                 return;
             }
-            if (anchorText && specialCharRegex.test(anchorText)) {
-                invalidHrefAnchors.push($anchor.toString());
+            const $img = $anchor.find('img');
+            const altAttribute = $img.attr('alt');
+            if (!altAttribute || altAttribute.trim() === '' || specialCharRegex.test(altAttribute)) {
+                anchorNotContainImageProperly.push($anchor.toString());
                 return;
             }
             issueFreeAnchors.push($anchor.toString());
             return;
         }
-
-        // If anchor tag contains an image tag
-        if (containsImage) {
-            const $imgTag = $anchor.find('img');
-            const imgSrc = $imgTag.attr('src');
-            const imgAlt = $imgTag.attr('alt');
-            if (imgSrc && imgSrc.trim() !== '' && imgAlt && imgAlt.trim() !== '') {
-                issueFreeAnchors.push($anchor.toString());
-                return;
-            }
-        }
-
-        // Proceed with other checks if anchor tag does not contain image tag or image tag doesn't have proper src and alt attributes
+        // if (hrefAttribute === '#') {
+        //     if (!anchorText || specialCharRegex.test(anchorText)) {
+        //         invalidHrefAnchors.push($anchor.toString());
+        //         return;
+        //     }
+        //     issueFreeAnchors.push($anchor.toString());
+        //     return;
+        // }
         if (!anchorText) {
             emptyAnchors.push($anchor.toString());
             return;
@@ -173,12 +245,10 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
             emptyHrefInAnchors.push($anchor.toString());
             return;
         }
-        // Check if href attribute exists and starts with a valid protocol or www., and anchor text doesn't contain only special characters
-        if ((!hrefAttribute || !/^https?:\/\/|^www\./i.test(hrefAttribute) || specialCharRegex.test(hrefAttribute)) || specialCharRegex.test(anchorText)) {
+        if (!/^https?:\/\/|^www\./i.test(hrefAttribute) || specialCharRegex.test(anchorText)) {
             invalidHrefAnchors.push($anchor.toString());
             return;
         }
-        // If all checks pass, the anchor is issue-free
         issueFreeAnchors.push($anchor.toString());
     });
 
@@ -283,6 +353,12 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
         issueFreeAnchors.map(singleAnchor => {
             console.log(singleAnchor);
         });
+        console.log('\n')
+        console.log("Anchor Tag Contains Image With Issues:", anchorNotContainImageProperly.length);
+        anchorNotContainImageProperly.map(singleAnchor => {
+            console.log(singleAnchor);
+        });
+
         // console.log('\n')
         // console.log("Total meaning less texts in anchor tag:", meaningLessTextInAnchors.length);
         // meaningLessTextInAnchors.map(singleAnchor => {
@@ -323,6 +399,39 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
 
 
     // Code for checking the form labels that are empty. Means no text in the form label 
+    // const forms = $('form');
+    // let totalForms = forms.length;
+    // console.log('\n')
+    // console.log("Total forms found in this code:", totalForms);
+    // forms.each(function (index) {
+    //     const form = $(this);
+    //     const formLabels = form.find('label');
+    //     let emptyLabels = [];
+    //     formLabels.each(function () {
+    //         const labelText = $(this).text().trim();
+    //         if (!labelText) {
+    //             emptyLabels.push($(this).toString());
+    //         }
+    //     });
+    //     console.log('\n')
+    //     console.log("************** Form " + (index + 1) + "  **************");
+    //     if (emptyLabels.length === 0) {
+    //         console.log("No empty labels found in this form.");
+    //     } else {
+    //         console.log("Total number of empty labels in this form found:", emptyLabels.length);
+    //         emptyLabels.map(singleLabel => {
+    //             console.log(singleLabel);
+    //         });
+    //         console.log('\n');
+    //         const formGuideline = 'https://www.w3.org/WAI/WCAG21/Understanding/labels-or-instructions.html'
+    //         const formGuidelineMore = 'https://www.w3.org/WAI/tutorials/forms/labels/'
+    //         console.log('---------- WCAG Guidelines For Form ------------')
+    //         console.log('Guideline for Form:', formGuideline);
+    //         console.log('More Guidelines for Form:', formGuidelineMore);
+    //     }
+    // });
+
+    
     const forms = $('form');
     let totalForms = forms.length;
     console.log('\n')
@@ -330,11 +439,19 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
     forms.each(function (index) {
         const form = $(this);
         const formLabels = form.find('label');
+        const formInputs = form.find('input, select, textarea, option, fieldset');
         let emptyLabels = [];
         formLabels.each(function () {
             const labelText = $(this).text().trim();
             if (!labelText) {
                 emptyLabels.push($(this).toString());
+            }
+        });
+        let missingTypeAttributes = [];
+        formInputs.each(function () {
+            const inputType = $(this).attr('type');
+            if (!inputType || inputType.trim() === '' || /[!@#$%^&*()_+{}\[\]:;<>,.?/~\\\-]/.test(inputType)) {
+                missingTypeAttributes.push($(this).toString());
             }
         });
         console.log('\n')
@@ -343,7 +460,7 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
             console.log("No empty labels found in this form.");
         } else {
             console.log("Total number of empty labels in this form found:", emptyLabels.length);
-            emptyLabels.map(singleLabel => {
+            emptyLabels.forEach(singleLabel => {
                 console.log(singleLabel);
             });
             console.log('\n');
@@ -353,7 +470,34 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
             console.log('Guideline for Form:', formGuideline);
             console.log('More Guidelines for Form:', formGuidelineMore);
         }
+        if (missingTypeAttributes.length > 0) {
+            console.log('\n');
+            console.log("Total number of input fields with missing or invalid type attribute:", missingTypeAttributes.length);
+            missingTypeAttributes.forEach(inputField => {
+                console.log(inputField);
+            });
+            console.log('\n');
+            console.log('---------- WCAG Guidelines For Input Field Type Attribute ------------')
+            console.log('Guideline for missing or invalid type attribute:', 'https://www.w3.org/WAI/WCAG21/quickref/#input-purposes');
+        }
     });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -364,23 +508,17 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
         const form = $(this);
         const formLabels = form.find('label');
         const formInputs = form.find('input, select, textarea, option, fieldset');
-
-        // Iterate through each form label
         formLabels.each(function () {
             const labelText = $(this).text().trim();
             if (!labelText) {
-                // If label is empty, add it to the emptyLabels array
                 const inputId = $(this).attr('for');
                 if (inputId) {
-                    // If input ID is present
                     if (!inputLabels[inputId]) {
-                        // If input label is encountered for the first time
                         inputLabels[inputId] = {
                             count: 1,
                             forms: [index + 1]
                         };
                     } else {
-                        // If input label is already encountered
                         inputLabels[inputId].count++;
                         if (!inputLabels[inputId].forms.includes(index + 1)) {
                             inputLabels[inputId].forms.push(index + 1);
@@ -452,7 +590,7 @@ function findImagesWithoutAlt(htmlContent) {
 
 
 // Read the file that we want to check accessibility issue
-fs.readFile('../index.html', 'utf8', (err, data) => {
+fs.readFile('../indexChecking.html', 'utf8', (err, data) => {
     if (err) {
         console.error("Error reading file:", err);
         return;
