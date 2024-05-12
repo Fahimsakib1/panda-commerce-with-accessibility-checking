@@ -3,9 +3,6 @@ const cheerio = require('cheerio');
 
 
 
-
-
-
 function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
 
     const $ = cheerio.load(htmlContent);
@@ -20,7 +17,6 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
     let issueFreeButtons = []
 
 
-
     let anchorCount = 0;
     let emptyAnchors = [];
     let meaningLessTextInAnchors = [];
@@ -29,17 +25,8 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
     let issueFreeAnchors = [];
     let anchorNotContainImageProperly = [];
 
-
-
-
-
-
-
-
     const altRegexButton = /^[!@#$%^&*()_+{}\[\]:;<>,.?/~\\\-]+$/;
     const altRegexAnchor = /^[!@#$%^&*()_+{}\[\]:;<>,.?/~\\\-]+$/;
-
-
 
     // Code for checking the buttons and anchor tags that are empty. Means no text in the button and anchor tags
     buttonTags.each(function () {
@@ -55,153 +42,6 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
         }
         issueFreeButtons.push($(this).toString());
     });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    //Ekdom shuru te ei function chilo
-    // anchorTags.each(function () {
-    //     anchorCount++;
-    //     const $anchor = $(this);
-    //     const anchorText = $anchor.text().trim();
-    //     const hrefAttribute = $anchor.attr('href');
-    //     const specialCharRegex = /^[!@#$%^&*()_+{}\[\]:;<>,.?/~\\\-]+$/;
-    //     if (!anchorText) {
-    //         emptyAnchors.push($anchor.toString());
-    //         return;
-    //     }
-    //     if (altRegexAnchor.test(anchorText.trim())) {
-    //         meaningLessTextInAnchors.push($anchor.toString());
-    //         return;
-    //     }
-    //     if (!hrefAttribute || hrefAttribute.trim() === '') {
-    //         emptyHrefInAnchors.push($anchor.toString());
-    //         return;
-    //     }
-    //     if ((!hrefAttribute || !/^https?:\/\/|^www\./i.test(hrefAttribute) || specialCharRegex.test(hrefAttribute)) || specialCharRegex.test(anchorText)) {
-    //         invalidHrefAnchors.push($anchor.toString());
-    //         return;
-    //     }
-    //     issueFreeAnchors.push($anchor.toString());
-    // });
-
-
-
-
-
-    //anchor tag er moddhe image thake check korte
-    // anchorTags.each(function () {
-    //     anchorCount++;
-    //     const $anchor = $(this);
-    //     const anchorText = $anchor.text().trim();
-    //     const hrefAttribute = $anchor.attr('href');
-    //     const specialCharRegex = /^[!@#$%^&*()_+{}\[\]:;<>,.?/~\\\-]+$/;
-    //     const containsImage = $anchor.find('img').length > 0;
-    //     if (containsImage) {
-    //         issueFreeAnchors.push($anchor.toString());
-    //         return;
-    //     }
-    //     if (!anchorText) {
-    //         emptyAnchors.push($anchor.toString());
-    //         return;
-    //     }
-    //     if (altRegexAnchor.test(anchorText.trim())) {
-    //         meaningLessTextInAnchors.push($anchor.toString());
-    //         return;
-    //     }
-    //     if (!hrefAttribute || hrefAttribute.trim() === '') {
-    //         emptyHrefInAnchors.push($anchor.toString());
-    //         return;
-    //     }
-    //     if ((!hrefAttribute || !/^https?:\/\/|^www\./i.test(hrefAttribute) || specialCharRegex.test(hrefAttribute)) || specialCharRegex.test(anchorText)) {
-    //         invalidHrefAnchors.push($anchor.toString());
-    //         return;
-    //     }
-    //     issueFreeAnchors.push($anchor.toString());
-    // });
-
-
-
-
-
-
-
-    //anchor tag er moddhe # thake check korbe and jodi anchor tag er moddhe image tag thake tahole check korbe with proper alt attribute
-    // anchorTags.each(function () {
-    //     anchorCount++;
-    //     const $anchor = $(this);
-    //     const anchorText = $anchor.text().trim();
-    //     const hrefAttribute = $anchor.attr('href');
-    //     const specialCharRegex = /^[!@#$%^&*()_+{}\[\]:;<>,.?/~\\\-]+$/;
-    //     const containsImage = $anchor.find('img').length > 0;
-    //     if (hrefAttribute === '#') {
-    //         if (!anchorText) {
-    //             emptyAnchors.push($anchor.toString());
-    //             return;
-    //         }
-    //         if (anchorText && specialCharRegex.test(anchorText)) {
-    //             invalidHrefAnchors.push($anchor.toString());
-    //             return;
-    //         }
-    //         issueFreeAnchors.push($anchor.toString());
-    //         return;
-    //     }
-    //     if (containsImage) {
-    //         const $imgTag = $anchor.find('img');
-    //         const imgSrc = $imgTag.attr('src');
-    //         const imgAlt = $imgTag.attr('alt');
-    //         if (imgSrc && imgSrc.trim() !== '' && imgAlt && imgAlt.trim() !== '') {
-    //             issueFreeAnchors.push($anchor.toString());
-    //             return;
-    //         }
-    //     }
-    //     if (!anchorText) {
-    //         emptyAnchors.push($anchor.toString());
-    //         return;
-    //     }
-    //     if (altRegexAnchor.test(anchorText.trim())) {
-    //         meaningLessTextInAnchors.push($anchor.toString());
-    //         return;
-    //     }
-    //     if (!hrefAttribute || hrefAttribute.trim() === '') {
-    //         emptyHrefInAnchors.push($anchor.toString());
-    //         return;
-    //     }
-    //     if ((!hrefAttribute || !/^https?:\/\/|^www\./i.test(hrefAttribute) || specialCharRegex.test(hrefAttribute)) || specialCharRegex.test(anchorText)) {
-    //         invalidHrefAnchors.push($anchor.toString());
-    //         return;
-    //     }
-    //     issueFreeAnchors.push($anchor.toString());
-    // });
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     anchorTags.each(function () {
@@ -225,14 +65,6 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
             issueFreeAnchors.push($anchor.toString());
             return;
         }
-        // if (hrefAttribute === '#') {
-        //     if (!anchorText || specialCharRegex.test(anchorText)) {
-        //         invalidHrefAnchors.push($anchor.toString());
-        //         return;
-        //     }
-        //     issueFreeAnchors.push($anchor.toString());
-        //     return;
-        // }
         if (!anchorText) {
             emptyAnchors.push($anchor.toString());
             return;
@@ -251,26 +83,6 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
         }
         issueFreeAnchors.push($anchor.toString());
     });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -327,6 +139,7 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
         console.log('More Guidelines for button:', moreGuidelineButton);
     }
 
+
     if (emptyAnchors.length === 0 && meaningLessTextInAnchors.length === 0 && emptyHrefInAnchors.length === 0) {
         console.log('*********************** Anchor Summary ***********************');
         console.log("There is no empty anchor tag that contains no text in the code.");
@@ -357,12 +170,6 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
         anchorNotContainImageProperly.map(singleAnchor => {
             console.log(singleAnchor);
         });
-
-        // console.log('\n')
-        // console.log("Total meaning less texts in anchor tag:", meaningLessTextInAnchors.length);
-        // meaningLessTextInAnchors.map(singleAnchor => {
-        //     console.log(singleAnchor);
-        // });
     }
 
 
@@ -394,176 +201,38 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
     
     const forms = $('form');
     let totalForms = forms.length;
     console.log('\n')
     console.log("Total forms found in this code:", totalForms);
-
-
-    // Form function that was used before
-
-    // forms.each(function (index) {
-    //     const form = $(this);
-    //     const formLabels = form.find('label');
-    //     const formInputs = form.find('input, select, textarea, option, fieldset');
-    //     let emptyLabels = [];
-    //     formLabels.each(function () {
-    //         const labelText = $(this).text().trim();
-    //         if (!labelText) {
-    //             emptyLabels.push($(this).toString());
-    //         }
-    //     });
-    //     let missingTypeAttributes = [];
-    //     formInputs.each(function () {
-    //         const inputType = $(this).attr('type');
-    //         if (!inputType || inputType.trim() === '' || /[!@#$%^&*()_+{}\[\]:;<>,.?/~\\\-]/.test(inputType)) {
-    //             missingTypeAttributes.push($(this).toString());
-    //         }
-    //     });
-    //     console.log('\n')
-    //     console.log("************** Form " + (index + 1) + "  **************");
-    //     if (emptyLabels.length === 0) {
-    //         console.log("No empty labels found in this form.");
-    //     } else {
-    //         console.log("Total number of empty labels in this form found:", emptyLabels.length);
-    //         emptyLabels.forEach(singleLabel => {
-    //             console.log(singleLabel);
-    //         });
-    //         console.log('\n');
-    //         const formGuideline = 'https://www.w3.org/WAI/WCAG21/Understanding/labels-or-instructions.html'
-    //         const formGuidelineMore = 'https://www.w3.org/WAI/tutorials/forms/labels/'
-    //         console.log('---------- WCAG Guidelines For Form ------------')
-    //         console.log('Guideline for Form:', formGuideline);
-    //         console.log('More Guidelines for Form:', formGuidelineMore);
-    //     }
-    //     if (missingTypeAttributes.length > 0) {
-    //         console.log('\n');
-    //         console.log("Total number of input fields with missing or invalid type attribute:", missingTypeAttributes.length);
-    //         missingTypeAttributes.forEach(inputField => {
-    //             console.log(inputField);
-    //         });
-    //         console.log('\n');
-    //         console.log('---------- WCAG Guidelines For Input Field Type Attribute ------------')
-    //         console.log('Guideline for missing or invalid type attribute:', 'https://www.w3.org/WAI/WCAG21/quickref/#input-purposes');
-    //     }
-    // });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    //New Form Function 
     forms.each(function (index) {
         const form = $(this);
         const formLabels = form.find('label');
         const formInputs = form.find('input, select, textarea, option, fieldset');
-
         let emptyLabels = [];
-        let labelsWithSpecialCharacters = [];
-        let issueLessFormLabel = [];
-        let labeledInputFields = 0;
-
-        // Check labels for empty text or special characters
         formLabels.each(function () {
             const labelText = $(this).text().trim();
             if (!labelText) {
                 emptyLabels.push($(this).toString());
-            } else if (/[!@#$%^&*()_+{}\[\]:;<>,.?/~\\\-]/.test(labelText)) {
-                labelsWithSpecialCharacters.push($(this).toString());
-            }
-            else {
-                issueLessFormLabel.push($(this).toString());
             }
         });
-
-        // Count labeled input fields
+        let missingTypeAttributes = [];
         formInputs.each(function () {
-            const input = $(this);
-            const inputParent = input.parent();
-            const associatedLabel = inputParent.is('label') ? inputParent : inputParent.find('label');
-            if (associatedLabel.length > 0) {
-                labeledInputFields++;
+            const inputType = $(this).attr('type');
+            if (!inputType || inputType.trim() === '' || /[!@#$%^&*()_+{}\[\]:;<>,.?/~\\\-]/.test(inputType)) {
+                missingTypeAttributes.push($(this).toString());
             }
         });
-
         console.log('\n')
         console.log("************** Form " + (index + 1) + "  **************");
-
-        // Empty labels
-        if (emptyLabels.length > 0) {
+        if (emptyLabels.length === 0) {
+            console.log("No empty labels found in this form.");
+        } else {
             console.log("Total number of empty labels in this form found:", emptyLabels.length);
             emptyLabels.forEach(singleLabel => {
                 console.log(singleLabel);
             });
-        } else {
-            console.log('\n')
-            console.log("No empty labels found in this form.");
-        }
-
-        // Labels with special characters
-        if (labelsWithSpecialCharacters.length > 0) {
-            console.log('\n');
-            console.log("Total number of labels with special characters in this form found:", labelsWithSpecialCharacters.length);
-            labelsWithSpecialCharacters.forEach(singleLabel => {
-                console.log(singleLabel);
-            });
-        } else {
-            console.log('\n')
-            console.log("No labels found with special characters in this form.");
-        }
-
-        // Issue less Form Labels
-        if (issueLessFormLabel.length > 0) {
-            console.log("Total number of Issue free labels in this form:", issueLessFormLabel.length);
-            issueLessFormLabel.forEach(singleLabel => {
-                console.log(singleLabel);
-            });
-        } else {
-            console.log('\n')
-            console.log("No issue free labels found in this form.");
-        }
-
-        // Input fields without labels
-        const totalInputFields = formInputs.length;
-        const inputFieldsWithLabels = labeledInputFields;
-        const inputFieldsWithoutLabels = totalInputFields - inputFieldsWithLabels;
-        console.log('\n');
-        console.log("Total number of input fields in this form:", totalInputFields);
-        console.log("Number of input fields with labels:", inputFieldsWithLabels);
-        console.log("Number of input fields without labels:", inputFieldsWithoutLabels);
-        console.log("Total number of labels in this form:", formLabels.length);
-
-        if (emptyLabels.length > 0 || labelsWithSpecialCharacters.length > 0 || issueLessFormLabel.length > 0 || labeledInputFields > 0) {
             console.log('\n');
             const formGuideline = 'https://www.w3.org/WAI/WCAG21/Understanding/labels-or-instructions.html'
             const formGuidelineMore = 'https://www.w3.org/WAI/tutorials/forms/labels/'
@@ -571,99 +240,24 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
             console.log('Guideline for Form:', formGuideline);
             console.log('More Guidelines for Form:', formGuidelineMore);
         }
+        if (missingTypeAttributes.length > 0) {
+            console.log('\n');
+            console.log("Total number of input fields with missing or invalid type attribute:", missingTypeAttributes.length);
+            missingTypeAttributes.forEach(inputField => {
+                console.log(inputField);
+            });
+            console.log('\n');
+            console.log('---------- WCAG Guidelines For Input Field Type Attribute ------------')
+            console.log('Guideline for missing or invalid type attribute:', 'https://www.w3.org/WAI/WCAG21/quickref/#input-purposes');
+        }
     });
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     // Code for checking the multiple form labels.
-    let inputLabels = {}; // Object to store input labels and associated form labels
+    let inputLabels = {}
     forms.each(function (index) {
         const form = $(this);
         const formLabels = form.find('label');
@@ -689,10 +283,6 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
         });
     });
 
-
-
-
-    // console the results
     console.log('\n')
     console.log("Total forms found:", totalForms);
     Object.keys(inputLabels).forEach(inputId => {
@@ -701,6 +291,8 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
             console.log(`Input label with ID "${inputId}" has multiple form labels associated with form ${labelInfo.forms.join(', ')}`);
         }
     });
+
+
 }
 
 
@@ -747,14 +339,13 @@ function findImagesWithoutAlt(htmlContent) {
 }
 
 
-
-
 // Read the file that we want to check accessibility issue
-fs.readFile('../index.html', 'utf8', (err, data) => {
+fs.readFile('../indexChecking.html', 'utf8', (err, data) => {
     if (err) {
         console.error("Error reading file:", err);
         return;
     }
+
 
     // *************** coder for showing issues with alt attributes of image tags ***************
 
@@ -798,7 +389,6 @@ fs.readFile('../index.html', 'utf8', (err, data) => {
         console.log("Total", totalImages + " Images found and among them ", totalIssues + " Images have issues");
         console.log("Image Performance percentage:", performancePercentageImages);
 
-
         console.log('\n');
         const nullOrEmptyTextOrMissingAltImage = 'https://webaim.org/standards/wcag/checklist#sc1.1.1'
         const howToSolveThisIssue = 'https://www.w3.org/WAI/WCAG20/quickref/20160105/#text-equiv-all'
@@ -808,24 +398,9 @@ fs.readFile('../index.html', 'utf8', (err, data) => {
             console.log('Guidelines for how to Meet 1.1.1 (Non-text Content): ', howToSolveThisIssue)
         }
 
-
-
     }
-
-    // call the function for showing issues of buttons, anchor tags, form label 
     findEmptyButtonsAndEmptyAnchorLink(data);
 });
-
-
-
-
-
-
-
-
-
-
-
 
 
 
