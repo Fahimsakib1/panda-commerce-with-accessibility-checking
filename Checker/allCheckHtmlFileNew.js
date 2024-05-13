@@ -414,51 +414,51 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
 
     // Form function that was used before
 
-    forms.each(function (index) {
-        const form = $(this);
-        const formLabels = form.find('label');
-        const formInputs = form.find('input, select, textarea, option, fieldset');
-        let emptyLabels = [];
-        formLabels.each(function () {
-            const labelText = $(this).text().trim();
-            if (!labelText) {
-                emptyLabels.push($(this).toString());
-            }
-        });
-        let missingTypeAttributes = [];
-        formInputs.each(function () {
-            const inputType = $(this).attr('type');
-            if (!inputType || inputType.trim() === '' || /[!@#$%^&*()_+{}\[\]:;<>,.?/~\\\-]/.test(inputType)) {
-                missingTypeAttributes.push($(this).toString());
-            }
-        });
-        console.log('\n')
-        console.log("************** Form " + (index + 1) + "  **************");
-        if (emptyLabels.length === 0) {
-            console.log("No empty labels found in this form.");
-        } else {
-            console.log("Total number of empty labels in this form found:", emptyLabels.length);
-            emptyLabels.forEach(singleLabel => {
-                console.log(singleLabel);
-            });
-            console.log('\n');
-            const formGuideline = 'https://www.w3.org/WAI/WCAG21/Understanding/labels-or-instructions.html'
-            const formGuidelineMore = 'https://www.w3.org/WAI/tutorials/forms/labels/'
-            console.log('---------- WCAG Guidelines For Form ------------')
-            console.log('Guideline for Form:', formGuideline);
-            console.log('More Guidelines for Form:', formGuidelineMore);
-        }
-        if (missingTypeAttributes.length > 0) {
-            console.log('\n');
-            console.log("Total number of input fields with missing or invalid type attribute:", missingTypeAttributes.length);
-            missingTypeAttributes.forEach(inputField => {
-                console.log(inputField);
-            });
-            console.log('\n');
-            console.log('---------- WCAG Guidelines For Input Field Type Attribute ------------')
-            console.log('Guideline for missing or invalid type attribute:', 'https://www.w3.org/WAI/WCAG21/quickref/#input-purposes');
-        }
-    });
+    // forms.each(function (index) {
+    //     const form = $(this);
+    //     const formLabels = form.find('label');
+    //     const formInputs = form.find('input, select, textarea, option, fieldset');
+    //     let emptyLabels = [];
+    //     formLabels.each(function () {
+    //         const labelText = $(this).text().trim();
+    //         if (!labelText) {
+    //             emptyLabels.push($(this).toString());
+    //         }
+    //     });
+    //     let missingTypeAttributes = [];
+    //     formInputs.each(function () {
+    //         const inputType = $(this).attr('type');
+    //         if (!inputType || inputType.trim() === '' || /[!@#$%^&*()_+{}\[\]:;<>,.?/~\\\-]/.test(inputType)) {
+    //             missingTypeAttributes.push($(this).toString());
+    //         }
+    //     });
+    //     console.log('\n')
+    //     console.log("************** Form " + (index + 1) + "  **************");
+    //     if (emptyLabels.length === 0) {
+    //         console.log("No empty labels found in this form.");
+    //     } else {
+    //         console.log("Total number of empty labels in this form found:", emptyLabels.length);
+    //         emptyLabels.forEach(singleLabel => {
+    //             console.log(singleLabel);
+    //         });
+    //         console.log('\n');
+    //         const formGuideline = 'https://www.w3.org/WAI/WCAG21/Understanding/labels-or-instructions.html'
+    //         const formGuidelineMore = 'https://www.w3.org/WAI/tutorials/forms/labels/'
+    //         console.log('---------- WCAG Guidelines For Form ------------')
+    //         console.log('Guideline for Form:', formGuideline);
+    //         console.log('More Guidelines for Form:', formGuidelineMore);
+    //     }
+    //     if (missingTypeAttributes.length > 0) {
+    //         console.log('\n');
+    //         console.log("Total number of input fields with missing or invalid type attribute:", missingTypeAttributes.length);
+    //         missingTypeAttributes.forEach(inputField => {
+    //             console.log(inputField);
+    //         });
+    //         console.log('\n');
+    //         console.log('---------- WCAG Guidelines For Input Field Type Attribute ------------')
+    //         console.log('Guideline for missing or invalid type attribute:', 'https://www.w3.org/WAI/WCAG21/quickref/#input-purposes');
+    //     }
+    // });
 
 
 
@@ -542,6 +542,7 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
         
         // Empty labels
         if (emptyLabels.length > 0) {
+            console.log('\n')
             console.log("Total number of empty labels in this form found:", emptyLabels.length);
             emptyLabels.forEach(singleLabel => {
                 console.log(singleLabel);
@@ -565,6 +566,7 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
 
         // Issue less Form Labels
         if (issueLessFormLabel.length > 0) {
+            console.log('\n')
             console.log("Total number of Issue free labels in this form:", issueLessFormLabel.length);
             issueLessFormLabel.forEach(singleLabel => {
                 console.log(singleLabel);
@@ -593,89 +595,6 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
             console.log('More Guidelines for Form:', formGuidelineMore);
         }
     });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
