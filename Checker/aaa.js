@@ -3,6 +3,37 @@ const cheerio = require('cheerio');
 
 
 
+// total count of all elements for the final evaluation 
+let totalButtonScanned = 0;
+let totalImageScanned = 0;
+let totalLinkScanned = 0;
+let totalFormScanned = 0;
+let totalInputFieldScanned = 0;
+let totalLabelScanned = 0;
+
+
+// total issues count of all elements for the final evaluation
+let totalButtonWithIssuesScanned = 0;
+let totalLinkWithIssuesScanned = 0;
+let totalImageWithIssuesScanned = 0;
+let totalFormWithIssuesScanned = 0;
+let totalInputFieldWithIssuesScanned = 0;
+let totalLabelWithIssuesScanned = 0;
+
+
+// Performance scan of each elements for the final evaluation
+let totalButtonPerformanceScanned;
+let totalLinkPerformanceScanned;
+let totalImagePerformanceScanned;
+let totalFormPerformanceScanned;
+
+
+
+
+
+const startTime = new Date().getTime(); // Start timing
+
+
 function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
 
     const $ = cheerio.load(htmlContent);
@@ -17,6 +48,7 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
     let issueFreeButtons = []
 
 
+
     let anchorCount = 0;
     let emptyAnchors = [];
     let meaningLessTextInAnchors = [];
@@ -25,27 +57,39 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
     let issueFreeAnchors = [];
     let anchorNotContainImageProperly = [];
 
+
+
+
     const altRegexButton = /^[!@#$%^&*()_+{}\[\]:;<>,.?/~\\\-]+$/;
     const altRegexAnchor = /^[!@#$%^&*()_+{}\[\]:;<>,.?/~\\\-]+$/;
+
+
 
     // Code for checking the buttons and anchor tags that are empty. Means no text in the button and anchor tags
     buttonTags.each(function () {
         buttonCount++;
+        totalButtonScanned++
         const buttonText = $(this).text().trim();
         if (!buttonText) {
             emptyButtons.push($(this).toString());
+            totalButtonWithIssuesScanned++
             return;
         }
         if (altRegexButton.test(buttonText.trim())) {
             meaningLessTextInButtons.push($(this).toString());
+            totalButtonWithIssuesScanned++
             return;
         }
         issueFreeButtons.push($(this).toString());
     });
 
 
+
+
+
     anchorTags.each(function () {
         anchorCount++;
+        totalLinkScanned++
         const $anchor = $(this);
         const anchorText = $anchor.text().trim();
         const hrefAttribute = $anchor.attr('href');
@@ -54,12 +98,14 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
         if (containsImage) {
             if (!hrefAttribute || hrefAttribute.trim() === '') {
                 emptyHrefInAnchors.push($anchor.toString());
+                totalLinkWithIssuesScanned++
                 return;
             }
             const $img = $anchor.find('img');
             const altAttribute = $img.attr('alt');
             if (!altAttribute || altAttribute.trim() === '' || specialCharRegex.test(altAttribute)) {
                 anchorNotContainImageProperly.push($anchor.toString());
+                totalLinkWithIssuesScanned++
                 return;
             }
             issueFreeAnchors.push($anchor.toString());
@@ -67,26 +113,26 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
         }
         if (!anchorText) {
             emptyAnchors.push($anchor.toString());
+            totalLinkWithIssuesScanned++
             return;
         }
         if (altRegexAnchor.test(anchorText.trim())) {
             meaningLessTextInAnchors.push($anchor.toString());
+            totalLinkWithIssuesScanned++
             return;
         }
         if (!hrefAttribute || hrefAttribute.trim() === '') {
             emptyHrefInAnchors.push($anchor.toString());
+            totalLinkWithIssuesScanned++
             return;
         }
         if (!/^https?:\/\/|^www\./i.test(hrefAttribute) || specialCharRegex.test(anchorText)) {
             invalidHrefAnchors.push($anchor.toString());
+            totalLinkWithIssuesScanned++
             return;
         }
         issueFreeAnchors.push($anchor.toString());
     });
-
-
-
-
 
 
 
@@ -96,15 +142,28 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
     } else {
         console.log('\n');
         console.log('*********************** Button Summary ***********************');
+
+        //empty buttons
         console.log("Total empty buttons or has no value text found:", emptyButtons.length);
         emptyButtons.map(singleButton => {
             console.log(singleButton);
         });
+
+        if (emptyButtons.length > 0) {
+            console.log("#### Solution: Don't let the button be empty. Add Text to the button.");
+        }
+
+        //Special character in button name
         console.log('\n')
         console.log("Total meaning less texts in buttons found:", meaningLessTextInButtons.length);
         meaningLessTextInButtons.map(singleButton => {
             console.log(singleButton);
         });
+        if (meaningLessTextInButtons.length > 0) {
+            console.log("#### Solution: Give a specific text to the button. Don't add meaningless texts");
+        }
+
+        //Issue free buttons
         console.log('\n')
         console.log("Total Issue Free Buttons:", issueFreeButtons.length);
         issueFreeButtons.map(singleButton => {
@@ -119,14 +178,16 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
     let performancePercentageButtons;
     if (totalButtons > 0) {
         performancePercentageButtons = ((issueFreeButtons.length / totalButtons) * 100).toFixed(2) + '%';
+        totalButtonPerformanceScanned = performancePercentageButtons
     } else {
         performancePercentageButtons = "Can't Calculate Performance as there is no button";
+        totalButtonPerformanceScanned = performancePercentageButtons
     }
     console.log('\n');
     console.log("Total Buttons Found: ", buttonCount);
     console.log("Total Issue Free Buttons: ", issueFreeButtons.length);
     console.log("Total", buttonCount + " Buttons found and among them ", totalButtonsWithIssues + " Buttons have issues");
-    console.log("Buttons Performance percentage:", performancePercentageButtons);
+    console.log("Buttons Accuracy percentage:", performancePercentageButtons);
 
     console.log('\n');
     const emptyButton1 = 'https://webaim.org/standards/wcag/checklist#sc2.4.4'
@@ -138,38 +199,65 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
         console.log('Guideline 2 for button:', emptyButton2);
         console.log('More Guidelines for button:', moreGuidelineButton);
     }
-
-
     if (emptyAnchors.length === 0 && meaningLessTextInAnchors.length === 0 && emptyHrefInAnchors.length === 0) {
         console.log('*********************** Anchor Summary ***********************');
         console.log("There is no empty anchor tag that contains no text in the code.");
     } else {
         console.log('\n')
         console.log('*********************** Anchor Summary ***********************');
+
+        // anchor tags with no text
         console.log("Total number of anchor tags with no text:", emptyAnchors.length);
         emptyAnchors.map(singleAnchor => {
             console.log(singleAnchor);
         });
+        if (emptyAnchors.length > 0) {
+            console.log("#### Solution: Add a proper text to the anchor that defines what this anchor tag is about (if proper href is provided)");
+        }
+
+        // empty href in anchor tags
         console.log('\n')
         console.log("Total Anchors with No href or empty href:", emptyHrefInAnchors.length);
         emptyHrefInAnchors.map(singleAnchor => {
             console.log(singleAnchor);
         });
+        if (emptyHrefInAnchors.length > 0) {
+            console.log("#### Solution: Add href to the anchor tag if it is missing. If there is href than don't put it empty. Give a proper destination link in the href");
+        }
+
+        //Invalid href in anchor tag or contains special characters in it
         console.log('\n')
         console.log("Total Anchors with Invalid or meaning less text in href:", invalidHrefAnchors.length);
         invalidHrefAnchors.map(singleAnchor => {
             console.log(singleAnchor);
         });
-        console.log('\n')
-        console.log("Total Issue Free Anchor Tags:", issueFreeAnchors.length);
-        issueFreeAnchors.map(singleAnchor => {
-            console.log(singleAnchor);
-        });
+        if (invalidHrefAnchors.length > 0) {
+            console.log("#### Solution: Don't use invalid or  meaning less texts or links in href. Use a proper href link instead");
+        }
+
+        //Anchor Tag has images with issues
         console.log('\n')
         console.log("Anchor Tag Contains Image With Issues:", anchorNotContainImageProperly.length);
         anchorNotContainImageProperly.map(singleAnchor => {
             console.log(singleAnchor);
         });
+        if (anchorNotContainImageProperly.length > 0) {
+            console.log("#### Solution: Check the alt attribute if missing,  and use proper names to the alt attribute");
+        }
+
+
+        //Issue free anchor tags
+        console.log('\n')
+        console.log("Total Issue Free Anchor Tags:", issueFreeAnchors.length);
+        issueFreeAnchors.map(singleAnchor => {
+            console.log(singleAnchor);
+        });
+
+        // console.log('\n')
+        // console.log("Total meaning less texts in anchor tag:", meaningLessTextInAnchors.length);
+        // meaningLessTextInAnchors.map(singleAnchor => {
+        //     console.log(singleAnchor);
+        // });
     }
 
 
@@ -179,14 +267,16 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
     let performancePercentageAnchors;
     if (totalAnchors > 0) {
         performancePercentageAnchors = ((issueFreeAnchors.length / totalAnchors) * 100).toFixed(2) + '%';
+        totalLinkPerformanceScanned = performancePercentageAnchors
     } else {
         performancePercentageAnchors = "Can't Calculate Performance as there is no anchor tag";
+        totalLinkPerformanceScanned = performancePercentageAnchors
     }
     console.log('\n');
     console.log("Total Anchors Found: ", anchorCount);
     console.log("Total Issue Free Anchors: ", issueFreeAnchors.length);
     console.log("Total", anchorCount + " Anchors found and among them ", totalAnchorsWithIssues + " Anchors have issues");
-    console.log("Anchors Performance percentage:", performancePercentageAnchors);
+    console.log("Anchors Accuracy percentage:", performancePercentageAnchors);
 
 
     console.log('\n');
@@ -201,38 +291,154 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
 
 
 
-    
     const forms = $('form');
     let totalForms = forms.length;
+    // totalFormScanned = forms.length;
     console.log('\n')
     console.log("Total forms found in this code:", totalForms);
+
+
+    let totalInputFieldsCount = 0;
+    let totalInputFieldsIssueCount = 0;
+
+    let totalLabelsCount = 0;
+    let totalLabelsIssueCount = 0;
+
+
+
+
+    //New Form Function 
     forms.each(function (index) {
+        totalFormScanned++
         const form = $(this);
         const formLabels = form.find('label');
         const formInputs = form.find('input, select, textarea, option, fieldset');
+
         let emptyLabels = [];
+        let labelsWithSpecialCharacters = [];
+        let issueLessFormLabel = [];
+        let missingTypeAttributesInInputField = [];
+        let labeledInputFields = 0;
+
+
+        // Check labels for empty text or special characters
         formLabels.each(function () {
+            totalLabelScanned++
             const labelText = $(this).text().trim();
+            const forAttribute = $(this).attr('for');
             if (!labelText) {
                 emptyLabels.push($(this).toString());
+                totalFormWithIssuesScanned++
+                totalLabelWithIssuesScanned++
+            } else if (/[!@#$%^&*()_+{}\[\]:;<>,.?/~\\\-]/.test(labelText)) {
+                labelsWithSpecialCharacters.push($(this).toString());
+                totalFormWithIssuesScanned++
+                totalLabelWithIssuesScanned++
+            } else if (labelText && labelText.trim() !== '' && forAttribute && forAttribute.trim() !== '') {
+                issueLessFormLabel.push($(this).toString());
+                // totalFormWithIssuesScanned++
+            }
+            else {
+                // issueLessFormLabel.push($(this).toString());
             }
         });
-        let missingTypeAttributes = [];
+
+        // Check the mismatched with the type attribute of an input field.
         formInputs.each(function () {
+            totalInputFieldScanned++
             const inputType = $(this).attr('type');
             if (!inputType || inputType.trim() === '' || /[!@#$%^&*()_+{}\[\]:;<>,.?/~\\\-]/.test(inputType)) {
-                missingTypeAttributes.push($(this).toString());
+                missingTypeAttributesInInputField.push($(this).toString());
+                totalFormWithIssuesScanned++
+                totalInputFieldWithIssuesScanned++
             }
         });
+
+        // Count labeled input fields
+        formInputs.each(function () {
+            const input = $(this);
+            const inputParent = input.parent();
+            const associatedLabel = inputParent.is('label') ? inputParent : inputParent.find('label');
+            if (associatedLabel.length > 0) {
+                labeledInputFields++;
+            }
+        });
+
         console.log('\n')
         console.log("************** Form " + (index + 1) + "  **************");
-        if (emptyLabels.length === 0) {
-            console.log("No empty labels found in this form.");
+
+        // Type related issues of input fields
+        if (missingTypeAttributesInInputField.length > 0) {
+            console.log('\n');
+            console.log("Total number of input fields with missing or invalid type attribute:", missingTypeAttributesInInputField.length);
+            missingTypeAttributesInInputField.forEach(inputField => {
+                console.log(inputField);
+            });
+            console.log('#### Solution: Add type attribute and give proper value that defines what the input field is about.');
+            console.log("#### Suggestion: In order to make a form label issue-free, you have to look to the for attribute of the label and the for attribute can not be empty. Labels can not be empty. You have to add proper text to the label.  Finally, the value of the for attribute of the label and the corresponding id value of the input field should be same...")
         } else {
+            console.log('\n')
+            console.log("No type issues of input fields in this form.");
+        }
+
+        // Empty labels
+        if (emptyLabels.length > 0) {
+            console.log('\n')
             console.log("Total number of empty labels in this form found:", emptyLabels.length);
             emptyLabels.forEach(singleLabel => {
                 console.log(singleLabel);
             });
+            console.log("#### Solution: Don't put the form labels empty. Use propr name instead");
+            console.log("#### Suggestion: In order to make a form label issue-free, you have to look to the for attribute of the label and the for attribute can not be empty. Labels can not be empty. You have to add proper text to the label.  Finally, the value of the for attribute of the label and the corresponding id value of the input field should be same...")
+        } else {
+            console.log('\n')
+            console.log("No empty labels found in this form.");
+        }
+
+        // Labels with special characters
+        if (labelsWithSpecialCharacters.length > 0) {
+            console.log('\n');
+            console.log("Total number of labels with special characters (Meaningless characters) in this form found:", labelsWithSpecialCharacters.length);
+            labelsWithSpecialCharacters.forEach(singleLabel => {
+                console.log(singleLabel);
+            });
+            console.log("#### Solution: Don't use meaningless text in form labels. It does not define what the inout put about");
+            console.log("#### Suggestion: In order to make a form label issue-free, you have to look to the for attribute of the label and the for attribute can not be empty. Labels can not be empty. You have to add proper text to the label.  Finally, the value of the for attribute of the label and the corresponding id value of the input field should be same...")
+        } else {
+            console.log('\n')
+            console.log("No labels found with special characters in this form.");
+        }
+
+        // Issue less Form Labels
+        if (issueLessFormLabel.length > 0) {
+            console.log('\n')
+            console.log("Total number of Issue free labels in this form:", issueLessFormLabel.length);
+            issueLessFormLabel.forEach(singleLabel => {
+                console.log(singleLabel);
+            });
+        } else {
+            console.log('\n')
+            console.log("No issue free labels found in this form.");
+        }
+
+        // Input fields without labels
+        const totalInputFields = formInputs.length;
+        const inputFieldsWithLabels = labeledInputFields;
+        const inputFieldsWithoutLabels = totalInputFields - inputFieldsWithLabels;
+        console.log('\n');
+        console.log("Total number of input fields in this form:", totalInputFields);
+        console.log("Number of input fields with labels:", inputFieldsWithLabels);
+        console.log("Number of input fields without labels:", inputFieldsWithoutLabels);
+        console.log("Total number of labels in this form:", formLabels.length);
+
+        // Increment total counts
+        totalInputFieldsCount += totalInputFields;
+        totalLabelsCount += formLabels.length;
+        totalInputFieldsIssueCount += missingTypeAttributesInInputField.length;
+        totalLabelsIssueCount += emptyLabels.length + labelsWithSpecialCharacters.length;
+
+
+        if (emptyLabels.length > 0 || labelsWithSpecialCharacters.length > 0 || issueLessFormLabel.length > 0 || labeledInputFields > 0 || missingTypeAttributesInInputField.length.length > 0) {
             console.log('\n');
             const formGuideline = 'https://www.w3.org/WAI/WCAG21/Understanding/labels-or-instructions.html'
             const formGuidelineMore = 'https://www.w3.org/WAI/tutorials/forms/labels/'
@@ -240,24 +446,44 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
             console.log('Guideline for Form:', formGuideline);
             console.log('More Guidelines for Form:', formGuidelineMore);
         }
-        if (missingTypeAttributes.length > 0) {
-            console.log('\n');
-            console.log("Total number of input fields with missing or invalid type attribute:", missingTypeAttributes.length);
-            missingTypeAttributes.forEach(inputField => {
-                console.log(inputField);
-            });
-            console.log('\n');
-            console.log('---------- WCAG Guidelines For Input Field Type Attribute ------------')
-            console.log('Guideline for missing or invalid type attribute:', 'https://www.w3.org/WAI/WCAG21/quickref/#input-purposes');
-        }
+
+
+        //setting the total input fields and label numbers for evaluation
+        getAllInputFieldsCount = formInputs.length;
+        getAllLabelsCount = formLabels.length;
+        getAllInputFieldsIssueCount = totalInputFieldsIssueCount;
+        getAllLabelsIssueCount = totalLabelsIssueCount;
     });
+
+
+
+
+    // Calculate performance percentage of Forms
+    let performancePercentageForms;
+    if (forms.length > 0) {
+        performancePercentageForms = (((0.5 * ((totalInputFieldsCount - totalInputFieldsIssueCount) / totalInputFieldsCount)) + (0.5 * ((totalLabelsCount - totalLabelsIssueCount) / totalLabelsCount))) * 100).toFixed(2) + '%';
+        totalFormPerformanceScanned = performancePercentageForms
+    } else {
+        performancePercentageForms = "Can't Calculate Performance as there is no forms";
+        totalFormPerformanceScanned = performancePercentageForms
+    }
+
+
+    //Total counts for forms
+    console.log('\n');
+    console.log('************** Form Summary **************');
+    console.log('Total Form Count: ', totalForms)
+    console.log("Total number of input fields across all forms ", totalInputFieldsCount + " among them ", totalInputFieldsIssueCount + ' have issues');
+    console.log("Total number of labels across all forms ", totalLabelsCount + " among them ", totalLabelsIssueCount + ' have issues');
+    console.log("Form Accuracy Percentage:", performancePercentageForms);
+
 
 
 
 
 
     // Code for checking the multiple form labels.
-    let inputLabels = {}
+    let inputLabels = {}; // Object to store input labels and associated form labels
     forms.each(function (index) {
         const form = $(this);
         const formLabels = form.find('label');
@@ -283,16 +509,17 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
         });
     });
 
+
+
+
+    // console the results
     console.log('\n')
-    console.log("Total forms found:", totalForms);
     Object.keys(inputLabels).forEach(inputId => {
         const labelInfo = inputLabels[inputId];
         if (labelInfo.count > 1) {
             console.log(`Input label with ID "${inputId}" has multiple form labels associated with form ${labelInfo.forms.join(', ')}`);
         }
     });
-
-
 }
 
 
@@ -313,21 +540,28 @@ function findImagesWithoutAlt(htmlContent) {
     const altRegex = /^[!@#$%^&*()_+{}\[\]:;<>,.?/~\\\-]+$/;
 
     imgTags.each(function () {
+        totalImageScanned++
         const altAttribute = $(this).attr('alt');
         if (altAttribute === undefined) {
             console.log('\n')
             undefinedAltCount++;
+            totalImageWithIssuesScanned++
             console.log("Missing Alt attribute in image tag found in: \n", $(this).toString(), '\n');
+            console.log("#### Solution: Add alt attribute to image tag and give a proper alt attribute name")
         }
         else if (altAttribute !== undefined && (altAttribute.trim() === "" || altAttribute.trim() === " " || altAttribute.trim() === '' || altAttribute.trim() === ' ')) {
             console.log('\n')
             emptyAltCount++;
+            totalImageWithIssuesScanned++
             console.log("Empty Alt attribute in image tag found in: \n", $(this).toString(), '\n');
+            console.log("#### Solution: Don't put the alt attribute empty and give a proper alt attribute name")
         }
         else if (altRegex.test(altAttribute.trim())) {
             console.log('\n')
             meaningLessTextInAltCount++;
+            totalImageWithIssuesScanned++
             console.log("Alt attribute contains special characters in image tag found in: \n", $(this).toString(), '\n');
+            console.log("#### Solution: Don't give meaningless/invalid names to alt attribute, give a proper alt attribute name instead")
         }
         else {
             console.log('\n')
@@ -339,13 +573,16 @@ function findImagesWithoutAlt(htmlContent) {
 }
 
 
+
+
+
+
 // Read the file that we want to check accessibility issue
-fs.readFile('../indexChecking.html', 'utf8', (err, data) => {
+fs.readFile('../index.html', 'utf8', (err, data) => {
     if (err) {
         console.error("Error reading file:", err);
         return;
     }
-
 
     // *************** coder for showing issues with alt attributes of image tags ***************
 
@@ -355,6 +592,7 @@ fs.readFile('../indexChecking.html', 'utf8', (err, data) => {
     let totalEmptyAltCount = 0;
     let totalIssueLessImageTagCount = 0;
     let totalMeaningLessTextInAltCount = 0;
+    let performancePercentageImages;
     htmlContent.forEach((content) => {
         const { undefinedAltCount, emptyAltCount, issueLessImageTagCount, meaningLessTextInAltCount } = findImagesWithoutAlt(content);
         totalUndefinedAltCount += undefinedAltCount;
@@ -365,29 +603,32 @@ fs.readFile('../indexChecking.html', 'utf8', (err, data) => {
     if (totalUndefinedAltCount === 0 && totalEmptyAltCount === 0 && totalIssueLessImageTagCount === 0 && totalMeaningLessTextInAltCount === 0) {
         console.log("Total number of image tags that do not have alt attributes:", 0);
         console.log("Total number of image tags with empty alt attributes:", 0);
-        console.log("Total number of image tags that are issue free:", 0);
         console.log("Total number of meaning less text in alt attributes:", 0);
+        console.log("Total number of image tags that are issue free:", 0);
     } else {
         // Calculate performance percentage of Images
         const totalImages = totalUndefinedAltCount + totalEmptyAltCount + totalIssueLessImageTagCount + totalMeaningLessTextInAltCount;
         const issueFreeImages = totalIssueLessImageTagCount;
         const totalIssues = totalImages - issueFreeImages;
 
-        let performancePercentageImages;
+        // let performancePercentageImages;
         if (totalImages > 0) {
             performancePercentageImages = ((issueFreeImages / totalImages) * 100).toFixed(2) + '%';
+            totalImagePerformanceScanned = performancePercentageImages
         } else {
             performancePercentageImages = "Can't Calculate Performance as there is no Image";
+            totalImagePerformanceScanned = performancePercentageImages
         }
 
         console.log("Total Images Found: ", totalImages);
         console.log("Total number of image tags that do not have alt attributes:", totalUndefinedAltCount);
         console.log("Total number of image tags with empty alt attributes:", totalEmptyAltCount);
-        console.log("Total number of image tags that are issue free:", totalIssueLessImageTagCount);
         console.log("Total number of meaning less text in alt attributes:", totalMeaningLessTextInAltCount);
+        console.log("Total number of image tags that are issue free:", totalIssueLessImageTagCount);
         console.log('\n');
         console.log("Total", totalImages + " Images found and among them ", totalIssues + " Images have issues");
-        console.log("Image Performance percentage:", performancePercentageImages);
+        console.log("Image Accuracy percentage:", performancePercentageImages);
+
 
         console.log('\n');
         const nullOrEmptyTextOrMissingAltImage = 'https://webaim.org/standards/wcag/checklist#sc1.1.1'
@@ -398,9 +639,55 @@ fs.readFile('../indexChecking.html', 'utf8', (err, data) => {
             console.log('Guidelines for how to Meet 1.1.1 (Non-text Content): ', howToSolveThisIssue)
         }
 
+
     }
+
+
+
+    // call the function for showing issues of buttons, anchor tags, form label 
     findEmptyButtonsAndEmptyAnchorLink(data);
+
+    console.log('\n')
+    console.log('#################### Final Evaluation Summary ####################')
+
+    console.log("Total", totalImageScanned + " Images found and among them ", totalImageWithIssuesScanned + '  Images have issues.... Image Accuracy: ', totalImagePerformanceScanned);
+
+    console.log("Total", totalButtonScanned + " Buttons found and among them ", totalButtonWithIssuesScanned + '  buttons have issues.... Button Accuracy: ', totalButtonPerformanceScanned);
+
+    console.log("Total", totalLinkScanned + " Anchor tag found and among them ", totalLinkWithIssuesScanned + '  anchor tags have issues.... Link Accuracy: ', totalLinkPerformanceScanned);
+
+
+    console.log((`Total ${totalFormScanned} forms found. Total ${totalFormWithIssuesScanned} Issues (Input Field Issue: ${totalInputFieldWithIssuesScanned}, Label Issue: ${totalLabelWithIssuesScanned}). Form Accuracy: ${totalFormPerformanceScanned}`))
+
+    let totalElements = totalImageScanned + totalButtonScanned + totalLinkScanned + totalInputFieldScanned + totalLabelScanned;
+    console.log("Total Elements (Image, Button, Link, Input, Label): ", totalElements);
+
+    let totalElementsWithIssues = totalImageWithIssuesScanned + totalButtonWithIssuesScanned + totalLinkWithIssuesScanned + totalInputFieldWithIssuesScanned + totalLabelWithIssuesScanned;
+    console.log("Total Elements (Image, Button, Link, Input, Label) with Issues : ", totalElementsWithIssues);
+
+    let overallPerformancePercentage = ((totalElements - totalElementsWithIssues) / totalElements * 100).toFixed(2) + '%';
+    console.log("Overall Accuracy Percentage of Scanned Elements: ", overallPerformancePercentage);
+
+
+    const endTime = new Date().getTime(); // End timing
+    const totalTime = (endTime - startTime) / 1000; // Calculate total time in seconds
+
+    console.log(`Total scanning time: ${totalTime} seconds`);
+
+
+
 });
+
+
+
+
+
+
+
+
+
+
+
 
 
 
