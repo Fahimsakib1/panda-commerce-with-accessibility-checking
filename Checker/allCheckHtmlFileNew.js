@@ -287,6 +287,11 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
         console.log('Guideline 2 for button:', emptyButton2);
         console.log('More Guidelines for button:', moreGuidelineButton);
     }
+    
+    
+    
+    
+    //Achor Summary Starts
     if (emptyAnchors.length === 0 && meaningLessTextInAnchors.length === 0 && emptyHrefInAnchors.length === 0) {
         console.log('\n');
         console.log('*********************** Anchor Summary ***********************');
@@ -822,7 +827,7 @@ function findImagesWithoutAlt(htmlContent) {
 
 
 // Read the file that we want to check accessibility issue
-fs.readFile('../correctedIssues.html', 'utf8', (err, data) => {
+fs.readFile('../index.html', 'utf8', (err, data) => {
     if (err) {
         console.error("Error reading file:", err);
         return;
