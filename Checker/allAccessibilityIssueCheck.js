@@ -561,7 +561,8 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
         console.log("Total number of input fields in this form:", totalInputFields);
         console.log("Number of input fields with labels:", inputFieldsWithLabels);
         console.log("Number of input fields without labels:", inputFieldsWithoutLabels);
-        console.log("Total number of labels in this form:", formLabels.length);
+        // console.log("Total number of labels in this form:", formLabels.length);
+        console.log("Total number of labels in this form:", inputFieldsWithLabels);
         console.log("Total number of issues in this form:", totalIssuesInForms.length);
 
         // Increment total counts
