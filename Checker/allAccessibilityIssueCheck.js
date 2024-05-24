@@ -469,7 +469,7 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
 
         // Type related issues of input fields
         if (missingTypeAttributesInInputField.length > 0) {
-            console.log('\n');
+            // console.log('\n');
             console.log("Total number of input fields with missing or invalid type attribute:", missingTypeAttributesInInputField.length);
             missingTypeAttributesInInputField.forEach(inputField => {
                 console.log(inputField);
@@ -724,7 +724,7 @@ function findImagesWithoutAlt(htmlContent) {
 
 
 // Read the file that we want to check accessibility issue
-fs.readFile('../index.html', 'utf8', (err, data) => {
+fs.readFile('../mainTestScriptFile.html', 'utf8', (err, data) => {
     if (err) {
         console.error("Error reading file:", err);
         return;
@@ -920,6 +920,8 @@ fs.readFile('../index.html', 'utf8', (err, data) => {
         console.log("Total number of meaning less text in src attributes:", totalEmptyAltAndSrcCount);
         console.log("Total number of empty alt and  src attributes:", totalMeaningLessTextInSrcCount);
         console.log("Total number of image tags that are issue free:", totalIssueLessImageTagCount);
+        
+        
         console.log('\n');
         console.log("Total", totalImages + " Images found and among them ", totalIssues + `${totalIssues > 1 ? '  Images have' : ' Image has'} issues`);
         console.log("Image Accuracy percentage:", performancePercentageImages);
