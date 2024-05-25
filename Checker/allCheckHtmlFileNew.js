@@ -291,7 +291,7 @@ function findEmptyButtonsAndEmptyAnchorLink(htmlContent) {
     
     
     
-    //Achor Summary Starts
+    //Anchor Summary Starts
     if (emptyAnchors.length === 0 && meaningLessTextInAnchors.length === 0 && emptyHrefInAnchors.length === 0) {
         console.log('\n');
         console.log('*********************** Anchor Summary ***********************');
@@ -1067,7 +1067,10 @@ fs.readFile('../index.html', 'utf8', (err, data) => {
     console.log("Total Elements (Image, Button, Link, Input, Label) with Issues : ", totalElementsWithIssues);
 
     let overallPerformancePercentage = ((totalElements - totalElementsWithIssues) / totalElements * 100).toFixed(2) + '%';
-    console.log("Overall Accuracy Percentage of Scanned Elements: ", overallPerformancePercentage);
+    let websiteIssuesTotal = (100 - parseFloat(overallPerformancePercentage)).toFixed(2) + '%'
+    console.log("Overall Accuracy of Scanned Elements: ", overallPerformancePercentage);
+    console.log("Website's Issue Found: ", websiteIssuesTotal);
+    
 
 
     const endTime = new Date().getTime(); // End timing
